@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN
+        expiresIn: '90d'
     })
 }
 
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user.user_id)
 
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true
+
 
     // Remove the password from respond
     user.user_password = undefined
@@ -28,8 +28,8 @@ const createSendToken = (user, statusCode, res) => {
     })
 }
 
-app.post('/signup',async(req,res,next)=>{
-    let sql = `SELECT * FROM customer WHERE username = '${username}'`;
+router.post('/signup',async(req,res,next)=>{
+    let sql = `SELECT * FROM customer WHERE username = '${req.body.username}'`;
     const query1 = db.query(sql , async(err, result) => {
         if(err){
             console.error(err);
@@ -42,7 +42,7 @@ app.post('/signup',async(req,res,next)=>{
         
             const user = {user_id: uuidv4(), user_password:hashedPass, username , first_name , last_name , email , phone_number , address}
             sql = 'INSERT INTO customer SET ?'
-            const query = db.query((sql, user, err,result) => {
+            const query = db.query(sql, user, (err,result) => {
                 if(err) console.error(err)
                 console.log(result)
             })
@@ -55,7 +55,7 @@ app.post('/signup',async(req,res,next)=>{
     })
 })
 
-app.post('/login',(req, res, next)=>{
+router.post('/login',(req, res, next)=>{
     const { user_password , username} = req.body
 
     const sql = `SELECT * FROM customer WHERE username = '${username}'`

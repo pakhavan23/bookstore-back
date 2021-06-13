@@ -191,7 +191,11 @@ WHERE book_name = 'Gone with the wind';
 
 -- getting a certain book's info
 SELECT *
-FROM book
+FROM book AS b
+JOIN has_author AS h
+ON b.book_id = h.book_id
+JOIN author AS a
+ON h.author_id = a.author_id
 WHERE book_name = 'Gone with the wind';
 
 -- getting author's info
@@ -210,8 +214,6 @@ ON h.book_id = b.book_id
 WHERE author_id = '12324234';
 
 -- getting the list of a translator's works
-
--- history of all purchases
 
 -- profile info
 SELECT *
